@@ -1,0 +1,120 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <link href="../../Content/bootstrap.css" rel="stylesheet" />
+</head>
+<body style="padding:20px">
+    <div>
+        <div class="well">
+            <table class="table-bordered">
+                <thead class="success">
+                    <tr>
+                        <h1> Login</h1>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>UserName</td>
+                        <td><input type="text" name="txtUserName" id="txtUserName" value="" placeholder="Email" /></td>
+                    </tr>
+                    <tr>
+                        <td>Password</td>
+                        <td><input type="password" name="txtPassword" id="txtPassword" value="" placeholder="Password" /></td>
+                    </tr>
+                    
+                    <tr class="success">
+                        <td colspan="1">
+                            <button type="button" id="btnLogin" class="btn btn-success success">Login</button>
+                        </td>
+                        <td colspan="1">
+                            <button type="button" id="btnRegister" class="btn btn-success success">Register</button>
+                        </td>
+                    </tr>
+                    <tr class="success">
+                        <td colspan="2">
+                            <button type="button" id="btnGoogleLogin" class="btn btn-success success">Google Login</button>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+            <div class="modal fade" tabindex="-1" id="SuccessModel" data-keyboard="false">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal modal-content">
+                        <table>
+                            <tr>
+                                <td><h1>Sucess</h1></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button id="btnClose" data-dissmiss="modal" class="btn btn-primary">Close</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="divError" class="alert alert-danger collapse">
+                <a href="#" id="linkClose" class="close">&times;</a>
+                <div id="ErrorMessageDiv"></div>
+            </div>
+        </div>
+    </div>
+    <script src="../../Scripts/jquery-1.10.2.min.js"></script>
+    <script src="../../Scripts/bootstrap.min.js"></script>
+    <script src="Scripts/GoogleAuthentiation.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            getAccessToken();
+            $('#btnGoogleLogin').on('click', function () {
+
+                window.location.href = "http://localhost:62513/api/Account/ExternalLogin?provider=Google&response_type=token&client_id=self&redirect_uri=http%3A%2F%2Flocalhost%3A62513%2FLogin.html&state=TGnFBFspU52MlKyudox2grIKotfbDrLmjjrX3ewQeM01";
+            });
+
+            $('#btnLogin').on('click', function () {
+                debugger;
+                $.ajax({
+                    url: 'http://localhost:62513/token',
+                    method: 'POST',
+                    ContentType:'application/json',
+                    data: {
+                        username: $('#txtUserName').val(),
+                        password: $('#txtPassword').val(),
+                        grant_type: 'password'
+                    },
+                    success: function (response) {
+                        $('#ErrorMessageDiv').text(JSON.stringify(response));
+                        sessionStorage.setItem('accessToken', response.access_token);
+                        window.location.href = "Data/Data.html";
+                        $('#divError').show('fade');
+                       // $('#SuccessModel').modal('show');
+                        $('#txtUserName').val('');
+                        $('#txtPassword').val('');
+                        
+                    },
+                    error: function (jqXHR) {
+                      
+                        $('#ErrorMessageDiv').text(jqXHR.responseText);
+                        $('#divError').show('fade');
+                    }
+
+                });
+
+            });
+
+            $('#linkClose').on('click', function () {
+                $('#divError').hide('fade');
+            });
+
+            $('#btnRegister').on('click', function () {
+                window.location.href = "Registration/Registration.html";
+            });
+        });
+
+
+    </script>
+
+</body>
+</html>

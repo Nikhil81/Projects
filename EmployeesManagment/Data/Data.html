@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <link href="../../Content/bootstrap.css" rel="stylesheet" />
+</head>
+<body style="padding:20px">
+    <div>
+        <div class="well">
+            <input type="button" id="btnLoadEmployee" class="btn btn-success" value="Load Employees " />
+            <input type="button" id="btnLogout" class="btn btn-success" value="Logout " />
+
+        </div>
+        <div class="well hidden" id="divData">
+            <table class="table table-bordered" id="tbldata">
+                <thead class="success">
+                    <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Gender</th>
+                        <th>Salary</th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+            </table>
+        </div>
+        <div class="modal fade" tabindex="-1" id="SuccessModel" data-keyboard="false">
+            <div class="modal-dialog modal-sm">
+                <div class="modal modal-content">
+                    <table>
+                        <tr>
+                            <td><h1>Session Experire</h1></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button id="btnClose" data-dissmiss="modal" class="btn btn-primary">Close</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="divError" class="alert alert-danger collapse">
+            <a href="#" id="linkClose" class="close">&times;</a>
+            <div id="ErrorMessageDiv"></div>
+        </div>
+
+    </div>
+    <script src="../../Scripts/jquery-1.10.2.min.js"></script>
+    <script src="../../Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            if (sessionStorage.getItem('accessToken') == null)
+            {
+                window.location.href = "/login.html";
+            }
+
+            $('#btnLogout').on('click', function () {
+                sessionStorage.removeItem('accessToken')
+                window.location.href = "/login.html";
+            });
+            $('#btnLoadEmployee').on('click', function () {
+                ;
+                $.ajax({
+                    url: 'http://localhost:62513/api/employees',
+                    method: 'GET',
+                    ContentType: 'application/json',
+                    data: {
+                        'Authorizaton': 'Bearer' + sessionStorage.getItem('accessToken')
+                    },
+                    success: function (response) {
+                        $('#tblBody').empty()
+                        $.each(response, function (index, val) {
+
+                            var row = $('<tr><td>' + val.ID
+                                + '</td><td>' + val.FirstName + '</td><td>' + val.LastName + '</td><td>' + val.Gender + '</td><td>' + val.Salary + '</td><tr>');
+
+                            $('#tblBody').append(row);
+                        });
+                        $('#divData').removeClass('hidden');
+                        // $('#ErrorMessageDiv').text(JSON.stringify(response));
+                        //$('#divError').show('fade');
+                        // sessionStorage.setItem('accessToken', response.access_token);
+                        // window.location.href = "Data/Data.html";
+
+                        // $('#SuccessModel').modal('show');
+
+                        // $('#divData').show('fade');
+
+                    },
+                    error: function (jqXHR) {
+
+                        $('#ErrorMessageDiv').text(jqXHR.responseText);
+                        $('#divError').show('fade');
+                    }
+
+                });
+
+            });
+
+            $('#linkClose').on('click', function () {
+                $('#divError').hide('fade');
+            });
+
+            $('#btnRegister').on('click', function () {
+                window.location.href = "Registration/Registration.html";
+            });
+        });
+
+
+    </script>
+
+</body>
+</html>

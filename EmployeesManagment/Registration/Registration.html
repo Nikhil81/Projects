@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <link href="../../Content/bootstrap.css" rel="stylesheet" />
+</head>
+<body style="padding:20px">
+    <div>
+        <div class="well">
+            <table class="table-bordered">
+                <thead class="success">
+                    <tr>
+                        <h1> New Registration Form</h1>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Email</td>
+                        <td><input type="text" name="txtEmail" id="txtEmail" value="" placeholder="Email" /></td>
+                    </tr>
+                    <tr>
+                        <td>Password</td>
+                        <td><input type="password" name="txtPassword" id="txtPassword" value="" placeholder="Password" /></td>
+                    </tr>
+                    <tr>
+                        <td>Confirm Password</td>
+                        <td><input type="password" name="txtConfirmPassword" id="txtConfirmPassword" placeholder="Confirm Password" value="" /></td>
+                    </tr>
+                    <tr class="success">
+                        <td colspan="1">
+                            <button type="button" id="btnLogin" class="btn btn-success success">Login</button>
+                        </td>
+                        <td colspan="1">
+                            <button type="button" id="btnRegister" class="btn btn-success success">Register</button>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+            <div class="modal fade" tabindex="-1" id="SuccessModel" data-keyboard="false">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal modal-content">
+                        <table>
+                            <tr>
+                                <td><h1>Sucess</h1></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button id="btnClose" data-dissmiss="modal" class="btn btn-primary">Close</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="divError" class="alert alert-danger collapse">
+                <a href="#" id="linkClose" class="close">&times;</a>
+                <div id="ErrorMessageDiv"></div>
+            </div>
+        </div>
+    </div>
+    <script src="../../Scripts/jquery-1.10.2.min.js"></script>
+    <script src="../../Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#btnRegister').on('click', function () {
+                $.ajax({
+
+                    url: 'http://localhost:62513/api/Account/Register',
+                    method: 'POST',
+                    data: {
+                        email: $('#txtEmail').val(),
+                        password: $('#txtPassword').val(),
+                        confirmPassword:$('#txtConfirmPassword').val()
+                    },
+                    success: function () {
+                        $('#SuccessModel').modal('show');
+                        $('#txtEmail').val('');
+                        $('#txtPassword').val('');
+                        $('#txtConfirmPassword').val('');
+                    },
+                    error: function (jqXHR) {
+                        debugger;
+                        $('#ErrorMessageDiv').text(jqXHR.responseText);
+                        $('#divError').show('fade');
+                    }
+                    
+                });
+
+            });
+
+            $('#linkClose').on('click', function () {
+                $('#divError').hide('fade');
+            });
+
+            $('#btnLogin').on('click', function () {
+                window.location.href = "/login.html";
+            });
+
+        });
+
+
+    </script>
+
+</body>
+</html>
